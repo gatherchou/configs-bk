@@ -19,7 +19,7 @@ set fileencoding=utf-8
 set nocompatible
 set splitright
 set splitbelow
-set foldmethod=syntax   
+set foldmethod=syntax
 set foldnestmax=10
 set nofoldenable
 set foldlevel=2
@@ -53,22 +53,32 @@ augroup END
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'dracula/vim', {'name': 'dracula'}
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Plug 'dracula/vim', {'name': 'dracula'}
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
+" Plug 'scrooloose/nerdtree'
+" Plug 'jistr/vim-nerdtree-tabs'
+" Plug 'Xuyuanp/nerdtree-git-plugin'
+" Plug 'ryanoasis/vim-devicons'
+" Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' },
+" Plug 'junegunn/fzf.vim',
+
+
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'kyazdani42/nvim-web-devicons' " optional, for file icons
+Plug 'kyazdani42/nvim-tree.lua'
+Plug 'tpope/vim-fugitive'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'sindrets/diffview.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
+
 Plug 'jiangmiao/auto-pairs'
 Plug 'tomtom/tcomment_vim'
-Plug 'scrooloose/nerdtree'
-Plug 'jistr/vim-nerdtree-tabs'
-Plug 'dstein64/vim-win'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'ryanoasis/vim-devicons'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'Yggdroot/indentLine'
+Plug 'dstein64/vim-win'
 Plug 'elzr/vim-json'
 Plug 'tpope/vim-fugitive'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' },
-Plug 'junegunn/fzf.vim',
 Plug 'stephpy/vim-yaml',
 Plug 'vim-scripts/LargeFile'
 
@@ -76,28 +86,111 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'yaegassy/coc-intelephense', {'do': 'yarn install --frozen-lockfile'}
 " Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }   " CocInstall coc-go
 
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+
 call plug#end()
 
 autocmd Filetype json let g:indentLine_setConceal = 0
 " set conceallevel=0
 let g:vim_json_syntax_conceal = 0
 
-let g:airline_theme='dracula'
-let g:airline_powerline_fonts = 1
-let g:airline_skip_empty_sections = 1
-let g:airline#extensions#branch#enabled = 1
-let g:airline#extensions#tabline#enabled = 1      
-let g:airline#extensions#tabline#buffer_nr_show = 1
-let g:airline#extensions#tabline#tab_nr_type = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:airline_section_z = "%l行, %c列 "
+" vim-fugitive
+nnoremap <leader>gs :tab Git<CR>
+nnoremap <leader>gl :tabnew<Bar>Gclog<CR>
 
-" NERDTree
-map <leader>e :NERDTreeTabsToggle<CR>
-let g:NERDTreeWinSize=40
-let NERDTreeShowHidden=1
-let NERDTreeShowLineNumbers=1
-autocmd FileType nerdtree setlocal relativenumber
+" coc
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+" nnoremap <silent> <leader>tn :TestNearest<CR>  " coc-intelephense:phpunit-singletest
+
+" LargeFile
+let g:LargeFile=10
+
+map <leader>e :NvimTreeToggle<CR>
+lua << END
+require("nvim-tree").setup({
+  sort_by = "case_sensitive",
+  disable_netrw = true,
+  hijack_netrw = false,
+  view = {
+    adaptive_size = true,
+    width = 40,
+    number = true,
+    relativenumber = true,
+    mappings = {
+      list = {
+        { key = "u", action = "dir_up" },
+      },
+    },
+  },
+  renderer = {
+    add_trailing = true,
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = false,
+    custom = {
+        ".git"
+    },
+    exclude = {
+        ".env"
+    },
+  },
+})
+END
+
+lua << END
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'dracula',
+    component_separators = { left = '', right = ''},
+    section_separators = { left = '', right = ''},
+    disabled_filetypes = {},
+    always_divide_middle = true,
+    globalstatus = false,
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch', 'diff'},
+    lualine_c = {'filename', 'diagnostics'},
+    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    lualine_y = {'progress'},
+    lualine_z = {'location'}
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {'location'},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {
+    lualine_a = {'buffers'},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {},
+    lualine_y = {},
+    lualine_z = {'tabs'}
+  }
+}
+END
+
+nnoremap <leader>f <cmd>Telescope find_files<cr>
+nnoremap <leader>s <cmd>Telescope live_grep<cr>
+nnoremap <leader>b <cmd>Telescope buffers<cr>
+lua << END
+require('telescope').setup{
+
+}
+END
+
+lua << END
+require("diffview").setup({})
+END
 
 " vim-go
 " let g:go_highlight_types = 1
@@ -113,23 +206,30 @@ autocmd FileType nerdtree setlocal relativenumber
 " let g:go_def_mode='gopls'
 " let g:go_info_mode='gopls'
 
-" FZF
-let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
-let g:fzf_layout = { 'down': '~30%' }
-nnoremap <leader>f :FZF<CR>
-nnoremap <leader>b :Buffers<CR>
-nnoremap <leader>] :vert winc ]<CR>
 
-" vim-fugitive
-nnoremap <leader>gs :tab Git<CR>
-nnoremap <leader>gl :tabnew<Bar>Gclog<CR>
 
-" coc
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-" nnoremap <silent> <leader>tn :TestNearest<CR>  " coc-intelephense:phpunit-singletest
 
-" LargeFile
-let g:LargeFile=10
+" history plugin config
+"
+" " NERDTredd
+" let g:airline_theme='dracula'
+" let g:airline_powerline_fonts = 1
+" let g:airline_skip_empty_sections = 1
+" let g:airline#extensions#branch#enabled = 1
+" let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#buffer_nr_show = 1
+" let g:airline#extensions#tabline#tab_nr_type = 1
+" let g:airline#extensions#tabline#formatter = 'unique_tail'
+" let g:airline_section_z = "%l行, %c列 "
+" " NERDTree
+" map <leader>e :NERDTreeTabsToggle<CR>
+" let g:NERDTreeWinSize=40
+" let NERDTreeShowHidden=1
+" let NERDTreeShowLineNumbers=1
+" autocmd FileType nerdtree setlocal relativenumber
+" " FZF
+" let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -L -g ""'
+" let g:fzf_layout = { 'down': '~30%' }
+" nnoremap <leader>f :FZF<CR>
+" nnoremap <leader>b :Buffers<CR>
+" nnoremap <leader>] :vert winc ]<CR>
