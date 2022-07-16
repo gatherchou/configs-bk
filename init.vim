@@ -31,6 +31,8 @@ nnoremap <leader>tr :split term://zsh<CR>a
 nnoremap <leader>nh :nohl<CR>
 tnoremap <A-q> <C-\><C-n>
 nnoremap <leader>s :Ag<CR>
+nnoremap <leader>num :set number relativenumber<CR>
+nnoremap <leader>nonum :set nonumber norelativenumber<CR>
 
 autocmd BufReadPost *.lock set syntax=json
 autocmd BufReadPost *.conf set filetype=sh
@@ -80,7 +82,7 @@ Plug 'dstein64/vim-win'
 Plug 'elzr/vim-json'
 Plug 'tpope/vim-fugitive'
 Plug 'stephpy/vim-yaml',
-Plug 'vim-scripts/LargeFile'
+" Plug 'vim-scripts/LargeFile'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'yaegassy/coc-intelephense', {'do': 'yarn install --frozen-lockfile'}
@@ -128,17 +130,31 @@ require("nvim-tree").setup({
   renderer = {
     add_trailing = true,
     group_empty = true,
+    icons = {
+      glyphs = {
+        folder = {
+          arrow_closed = "▸",
+          arrow_open = "▾",
+        }
+      }
+    }
   },
   filters = {
     dotfiles = false,
     custom = {
-        ".git"
+      ".git"
     },
     exclude = {
-        ".env"
+      ".env",
+      "node_modules",
+      "vendor",
     },
   },
 })
+END
+
+lua << END
+require('nvim-web-devicons')
 END
 
 lua << END
@@ -155,10 +171,10 @@ require('lualine').setup {
   sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch', 'diff'},
-    lualine_c = {'filename', 'diagnostics'},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
-    lualine_y = {'progress'},
-    lualine_z = {'location'}
+    lualine_c = {'filename'},
+    lualine_x = {'diagnostics', 'filetype'},
+    lualine_y = {'encoding', 'fileformat'},
+    lualine_z = {'%l行, %c列', '%L:%p%%'},
   },
   inactive_sections = {
     lualine_a = {},
@@ -192,7 +208,7 @@ lua << END
 require("diffview").setup({})
 END
 
-" vim-go
+" " vim-go
 " let g:go_highlight_types = 1
 " let g:go_highlight_functions = 1
 " let g:go_highlight_function_calls = 1
