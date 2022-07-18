@@ -124,6 +124,7 @@ require("nvim-tree").setup({
     mappings = {
       list = {
         { key = "u", action = "dir_up" },
+        { key = "<C-e>", action = "" }
       },
     },
   },
@@ -171,7 +172,13 @@ require('lualine').setup {
   sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch', 'diff'},
-    lualine_c = {'filename'},
+    lualine_c = {
+      {
+        'filename',
+        file_status = true,
+        path = 2,
+      }
+    },
     lualine_x = {'diagnostics', 'filetype'},
     lualine_y = {'encoding', 'fileformat'},
     lualine_z = {'%l行, %c列', '%L:%p%%'},
@@ -179,8 +186,14 @@ require('lualine').setup {
   inactive_sections = {
     lualine_a = {},
     lualine_b = {},
-    lualine_c = {'filename'},
-    lualine_x = {'location'},
+    lualine_c = {
+      {
+        'filename',
+        file_status = true,
+        path = 2,
+      }
+    },
+    lualine_x = {},
     lualine_y = {},
     lualine_z = {}
   },
