@@ -1,4 +1,5 @@
 return {
     'neoclide/coc.nvim',
-    branch = 'release'
+    event = "VeryLazy",
+    branch = 'release',
 }

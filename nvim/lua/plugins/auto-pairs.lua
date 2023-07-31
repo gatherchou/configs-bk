@@ -1,4 +1,4 @@
 return {
-    'dstein64/vim-win',
+    'jiangmiao/auto-pairs',
     event = "VeryLazy",
 }

@@ -31,6 +31,10 @@ local function on_attach(bufnr)
 
 end
 
+local map = vim.keymap.set
+map("n", "<leader>e", ":NvimTreeToggle<CR>")
+map("n", "<leader>ff", ":NvimTreeFindFile<CR>")
+
 return {
   {
     "kyazdani42/nvim-tree.lua",
